@@ -5,4 +5,5 @@ export const defaultConfig: Config = {
   match: "https://zh.minecraft.wiki/w/**",
   maxPagesToCrawl: 50,
   outputFileName: "output.json",
+  maxTokens: 2000000,
 };

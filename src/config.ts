@@ -1,6 +1,8 @@
 import { z } from "zod";
-
 import type { Page } from "playwright";
+import { configDotenv } from "dotenv";
+
+configDotenv();
 
 const Page: z.ZodType<Page> = z.any();
 
@@ -18,7 +20,12 @@ export const configSchema = z.object({
    * @default ""
    */
   match: z.string().or(z.array(z.string())),
-
+  /**
+   * Pattern to match against for links on a page to exclude from crawling
+   * @example "https://www.builder.io/c/docs/**"
+   * @default ""
+   */
+  exclude: z.string().or(z.array(z.string())).optional(),
   /**
    * Selector to grab the inner text from
    * @example ".docs-builder-container"
@@ -37,10 +44,18 @@ export const configSchema = z.object({
   outputFileName: z.string(),
   /** Optional cookie to be set. E.g. for Cookie Consent */
   cookie: z
-    .object({
-      name: z.string(),
-      value: z.string(),
-    })
+    .union([
+      z.object({
+        name: z.string(),
+        value: z.string(),
+      }),
+      z.array(
+        z.object({
+          name: z.string(),
+          value: z.string(),
+        }),
+      ),
+    ])
     .optional(),
   /** Optional function to run for each page found */
   onVisitPage: z
